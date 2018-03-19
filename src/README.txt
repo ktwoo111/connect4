@@ -3,7 +3,7 @@
 3. Windows 10 and command prompt
 
 4. 
-The maxconnect4.java is the main frame, and AiPlayer.java contains the logic for minimax. The GameBoard.java is mainly for display purposes only.
+The maxconnect4.java is the main frame calling AiPlayer class which contains the logic for minimax. The GameBoard.java is mainly for display purposes only.
 .
 
 5. 

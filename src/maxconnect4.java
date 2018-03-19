@@ -40,7 +40,7 @@ public class maxconnect4
   {
 	// check for the correct number of arguments
     
-	  /*
+	  
 	  if( args.length != 4 ) 
     {
       System.out.println("Four command-line arguments are needed:\n"
@@ -49,25 +49,25 @@ public class maxconnect4
 
       exit_function( 0 );
      }
-     */
+     
     
     // parse the input arguments
 	 
-    /*
+    
     String game_mode = args[0].toString();				// the game mode
     String input = args[1].toString();					// the input game file
     String output = args[2].toString();				    // the output game file
     String CorH = args[2].toString();
     int depthLevel = Integer.parseInt( args[3] );  		// the depth level of the ai search
-    */
     
-	
+    
+	/*
     String game_mode = "one-move";				// the game mode
     String input = "src/test1.txt";					// the input game file
     String output = "output1.txt";				    // the output game file
     String CorH = "human-next";       //for interactive, who goes first
     int depthLevel =5;  		// the depth level of the ai search
-    
+    */
 		
     
     // create and initialize the game board
@@ -113,6 +113,10 @@ public class maxconnect4
 						System.out.print("which column(0-6) do you want to put your piece?: ");
 						Scanner in = new Scanner(System.in);
 						playColumn = in.nextInt();
+						
+						if(playColumn < 0 || playColumn > 6) {
+							playColumn = 0;						
+						}
 						
 					}  	
     	            
