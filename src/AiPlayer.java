@@ -248,7 +248,11 @@ public int[] DepthAlphaBeta(int currentDepth, GameBoard boardSim, int alpha, int
     			if(previous != bestValue){
     				bestMove = i;
     			}
-    			beta = Math.min(beta, bestValue);
+    			//beta = Math.min(beta, bestValue);
+    			if(bestValue < beta){
+    				beta = bestValue;
+    				bestMove = i;
+    			}
     			if (beta <= alpha){
     				break;
     			}
