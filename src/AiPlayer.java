@@ -16,7 +16,7 @@ public class AiPlayer
 {
 	private int depthLimit;
 	private int playerNum;
-	private int opponNum;
+	private int oppNum;
     /**
      * The constructor essentially does nothing except instantiate an
      * AiPlayer object.
@@ -33,28 +33,51 @@ public class AiPlayer
     public void SetNums(int player){
     	this.playerNum = player;
     	if(playerNum == 1){
-    		this.opponNum = 2;
+    		this.oppNum = 2;
     	}
     	else{
-    		this.opponNum = 1;  		
+    		this.oppNum = 1;  		
     	}
     	
     }
     public int Evaluation(GameBoard board, int depth){
+    	int current = board.getCurrentTurn();
+    	int opp = -1;
+    	if(current == 1){
+    		opp = 2;
+    	}
+    	else{
+    		opp = 1;  		
+    	}
+    	
+    	/*
     	int fours = NumStreaks(board,playerNum,4);
     	int threes = NumStreaks(board,playerNum,3);
     	int twos = NumStreaks(board,playerNum,2);
     	
-    	int oFours = NumStreaks(board,opponNum,3);
-    	int oThrees = NumStreaks(board,opponNum,3);
-    	int oTwos = NumStreaks(board,opponNum,2);
+    	int oFours = NumStreaks(board,oppNum,4);
+    	int oThrees = NumStreaks(board,oppNum,3);
+    	int oTwos = NumStreaks(board,oppNum,2);
+    	*/
+    	
+    	
+    	int fours = NumStreaks(board,current,4);
+    	int threes = NumStreaks(board,current,3);
+    	int twos = NumStreaks(board,current,2);
+    	
+    	int oFours = NumStreaks(board,opp,4);
+    	int oThrees = NumStreaks(board,opp,3);
+    	int oTwos = NumStreaks(board,opp,2);
+    	
     	
     	if(oFours > 0){
-    		return -100000 - depth;
+    		return -10000 - depth;
     		
     	}
     	
-    	return (fours*100000 + threes*100 + twos) - (oThrees*100 +oTwos) + depth;
+    	return (fours*1000 + threes*100 + twos) - (oThrees*100 +oTwos) + depth;
+    	
+    	//return board.getScore(current) - board.getScore(opp);
     }
     
     public int NumStreaks(GameBoard board,int playerNumber, int streak){
@@ -169,32 +192,39 @@ public class AiPlayer
      * @return an integer indicating which column the AiPlayer would like
      * to play in.
      */
-    public int[] DepthAlphaBeta(int currentDepth, GameBoard boardSim, int alpha, int beta, boolean isMaxPlayer){
+public int[] DepthAlphaBeta(int currentDepth, GameBoard boardSim, int alpha, int beta, int currentPlayer){
 		
     	
-    	if(currentDepth >= this.depthLimit || boardSim.getPieceCount() == 42){
+    	if(currentDepth == 0 || boardSim.getPieceCount() == 42){
 			int[] returnValue = new int[2];
 			returnValue[0] = Evaluation(boardSim, currentDepth);
 			returnValue[1] = -5;
     		return returnValue;		
 		}
     	
-    	   	
-    	if(isMaxPlayer){
+    	
+    	if(boardSim.getCurrentTurn() == currentPlayer){
     	int[] returnValue = new int[2];
-    	int bestValue = -9999999;
+    	int bestValue = -999999;
     	int bestMove = -10;
     	for(int i = 0; i < 7; i++){ //putting a piece in each column
 			GameBoard modified = new GameBoard(boardSim.getGameBoard());
 			if(modified.isValidPlay(i)){
 			modified.playPiece(i);
-			int[] value = DepthAlphaBeta(currentDepth+1, modified, alpha, beta, false ); 
+			
+			int[] value = DepthAlphaBeta(currentDepth-1, modified, alpha, beta, modified.getCurrentTurn());
+			//System.out.print("col: " + i + "  ");
+			//System.out.println(value[0]);
 			int previous = bestValue;
 			bestValue = Math.max(bestValue, value[0]);
 			if(previous != bestValue){
 				bestMove = i;
-				}
-			alpha = Math.max(alpha, bestValue);
+			}
+			//alpha = Math.max(alpha, bestValue);
+			if(bestValue > alpha){
+				alpha = bestValue;
+				bestMove = i;
+			}
 			if (beta <= alpha){
 				break;
 			}
@@ -206,19 +236,19 @@ public class AiPlayer
     	}
     	else{
     		int[] returnValue = new int[2];
-        	int bestValue = 9999999;
+        	int bestValue = 999999;
         	int bestMove = -10;
         	for(int i = 0; i < 7; i++){ //putting a piece in each column
     			GameBoard modified = new GameBoard(boardSim.getGameBoard());
     			if(modified.isValidPlay(i)){
     			modified.playPiece(i);
-    			int[] value = DepthAlphaBeta(currentDepth+1, modified, alpha, beta, true ); 
+    			int[] value = DepthAlphaBeta(currentDepth-1, modified, alpha, beta, modified.getCurrentTurn()); 
     			int previous = bestValue;
     			bestValue = Math.min(bestValue, value[0]);
     			if(previous != bestValue){
     				bestMove = i;
-    				}
-    			alpha = Math.min(alpha, bestValue);
+    			}
+    			beta = Math.min(beta, bestValue);
     			if (beta <= alpha){
     				break;
     			}
@@ -230,6 +260,74 @@ public class AiPlayer
     	}
     }
     
+    /*
+    public int[] DepthAlphaBeta(int currentDepth, GameBoard boardSim, int alpha, int beta, boolean isMaxPlayer){
+		
+    	
+    	if(currentDepth == 0 || boardSim.getPieceCount() == 42){
+			int[] returnValue = new int[2];
+			returnValue[0] = Evaluation(boardSim, currentDepth);
+			returnValue[1] = -5;
+    		return returnValue;		
+		}
+    	
+    	   	
+    	if(isMaxPlayer){
+    	int[] returnValue = new int[2];
+    	int bestValue = -999999;
+    	int bestMove = -10;
+    	for(int i = 0; i < 7; i++){ //putting a piece in each column
+			GameBoard modified = new GameBoard(boardSim.getGameBoard());
+			if(modified.isValidPlay(i)){
+			modified.playPiece(i);
+			int[] value = DepthAlphaBeta(currentDepth-1, modified, alpha, beta, false ); 
+			//System.out.print("col: " + i + "  ");
+			//System.out.println(value[0]);
+			int previous = bestValue;
+			bestValue = Math.max(bestValue, value[0]);
+			if(previous != bestValue){
+				bestMove = i;
+			}
+			//alpha = Math.max(alpha, bestValue);
+			if(bestValue > alpha){
+				alpha = bestValue;
+				bestMove = i;
+			}
+			if (beta <= alpha){
+				break;
+			}
+			}
+		}
+    	returnValue[0] = bestValue;
+    	returnValue[1] = bestMove;
+		return returnValue;
+    	}
+    	else{
+    		int[] returnValue = new int[2];
+        	int bestValue = 999999;
+        	int bestMove = -10;
+        	for(int i = 0; i < 7; i++){ //putting a piece in each column
+    			GameBoard modified = new GameBoard(boardSim.getGameBoard());
+    			if(modified.isValidPlay(i)){
+    			modified.playPiece(i);
+    			int[] value = DepthAlphaBeta(currentDepth-1, modified, alpha, beta, true ); 
+    			int previous = bestValue;
+    			bestValue = Math.min(bestValue, value[0]);
+    			if(previous != bestValue){
+    				bestMove = i;
+    			}
+    			beta = Math.min(beta, bestValue);
+    			if (beta <= alpha){
+    				break;
+    			}
+    			}
+    		}
+        	returnValue[0] = bestValue;
+        	returnValue[1] = bestMove;
+    		return returnValue;
+    	}
+    }
+    */
     public int getDepthLimit() {
 		return depthLimit;
 	}
@@ -241,7 +339,7 @@ public class AiPlayer
 
 
 	public int getOpponNum() {
-		return opponNum;
+		return oppNum;
 	}
 
 
@@ -251,13 +349,15 @@ public class AiPlayer
 
 
 	public void setOpponNum(int opponNum) {
-		this.opponNum = opponNum;
+		this.oppNum = opponNum;
 	}
 
 
 	public int findBestPlay(GameBoard boardSim) 
     {
     	//depth will always be 0, currentPlayer is whatever player number the AI will be.
-    	return DepthAlphaBeta(0, boardSim,-9999999,9999999,true)[1];
+    	
+		//return DepthAlphaBeta(depthLimit, boardSim,-99999,99999,true)[1];
+    	return DepthAlphaBeta(depthLimit, boardSim,-99999,99999,boardSim.getCurrentTurn())[1];
     }
 }

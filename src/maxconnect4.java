@@ -38,9 +38,9 @@ public class maxconnect4
 {
   public static void main(String[] args) 
   {
-    /* TODO: COMMENTING THIS SECTION OUT FOR TESTING ON ECLIPSE
 	// check for the correct number of arguments
-    if( args.length != 4 ) 
+    
+	  if( args.length != 4 ) 
     {
       System.out.println("Four command-line arguments are needed:\n"
                          + "Usage: java [program name] interactive [input_file] [computer-next / human-next] [depth]\n"
@@ -48,27 +48,30 @@ public class maxconnect4
 
       exit_function( 0 );
      }
-	*/
+     
     
     // parse the input arguments
-    //String game_mode = args[0].toString();				// the game mode
-    //String input = args[1].toString();					// the input game file
-    //String output = args[2].toString();				    // the output game file
-    //int depthLevel = Integer.parseInt( args[3] );  		// the depth level of the ai search
+	 
+    
+    String game_mode = args[0].toString();				// the game mode
+    String input = args[1].toString();					// the input game file
+    String output = args[2].toString();				    // the output game file
+    String CorH = args[2].toString();
+    int depthLevel = Integer.parseInt( args[3] );  		// the depth level of the ai search
     
     
+	/*
     String game_mode = "one-move";				// the game mode
-    String input = "input1.txt";					// the input game file
+    String input = "src/test1.txt";					// the input game file
     String output = "output1.txt";				    // the output game file
-    String CorH = "computer-next";       //for interactive, who goes first
+    String CorH = "human-next";       //for interactive, who goes first
     int depthLevel =5;  		// the depth level of the ai search
+    */
 		
     
-    System.out.println("HELLO1");
     // create and initialize the game board
     GameBoard currentGame = new GameBoard(input);
     	
-    System.out.println("HELLO2");
     //  variables to keep up with the game
     int playColumn = 99;				//  the players choice of column to play
     boolean playMade = false;			//  set to true once a play has been made
@@ -106,9 +109,10 @@ public class maxconnect4
     	            	playColumn = computer.findBestPlay(currentGame);  	            	
     	            }
 					else{
-						System.out.print("which column(1-7) do you want to put your piece?: ");
+						System.out.print("which column(0-6) do you want to put your piece?: ");
 						Scanner in = new Scanner(System.in);
-						playColumn = in.nextInt()-1;	
+						playColumn = in.nextInt();
+						
 					}  	
     	            
 					// play the piece
@@ -136,7 +140,7 @@ public class maxconnect4
 			
     else if(game_mode.equalsIgnoreCase( "one-move" ) ) 
     {
-    	   System.out.println("HELLO3");
+  
     	// create the Ai Player
         AiPlayer player1 = new AiPlayer(depthLevel,1);
         AiPlayer player2 = new AiPlayer(depthLevel,2);
