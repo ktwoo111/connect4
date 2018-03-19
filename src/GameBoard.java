@@ -218,7 +218,8 @@ public class GameBoard
 	}
 
 
-	public int get3Streak(int player){   	
+	public int get3Streak( int player ) 
+	{
 		//reset the scores
 		int playerScore = 0;
 
@@ -228,9 +229,8 @@ public class GameBoard
 			for( int j = 0; j < 4; j++ ) 
 			{
 				if( ( this.playBoard[ i ][j] == player ) &&
-						( this.playBoard[ i ][ j+1 ] == player )
-
-						) 
+						( this.playBoard[ i ][ j+1 ] == player ) &&
+						( this.playBoard[ i ][ j+2 ] == player ) ) 
 				{
 					playerScore++;
 				}
@@ -241,8 +241,8 @@ public class GameBoard
 		for( int i = 0; i < 3; i++ ) {
 			for( int j = 0; j < 7; j++ ) {
 				if( ( this.playBoard[ i ][ j ] == player ) &&
-						( this.playBoard[ i+1 ][ j ] == player )
-						) {
+						( this.playBoard[ i+1 ][ j ] == player ) &&
+						( this.playBoard[ i+2 ][ j ] == player )) {
 					playerScore++;
 				}
 			}
@@ -252,9 +252,8 @@ public class GameBoard
 		for( int i = 0; i < 3; i++ ){
 			for( int j = 0; j < 4; j++ ) {
 				if( ( this.playBoard[ i ][ j ] == player ) &&
-						( this.playBoard[ i+1 ][ j+1 ] == player )
-
-						) {
+						( this.playBoard[ i+1 ][ j+1 ] == player ) &&
+						( this.playBoard[ i+2 ][ j+2 ] == player )) {
 					playerScore++;
 				}
 			}
@@ -264,16 +263,15 @@ public class GameBoard
 		for( int i = 0; i < 3; i++ ){
 			for( int j = 0; j < 4; j++ ) {
 				if( ( this.playBoard[ i+3 ][ j ] == player ) &&
-						( this.playBoard[ i+2 ][ j+1 ] == player )
-						) {
+						( this.playBoard[ i+2 ][ j+1 ] == player ) &&
+						( this.playBoard[ i+1 ][ j+2 ] == player ) ) {
 					playerScore++;
 				}
 			}
 		}// end player score check
 
 		return playerScore;
-
-	}
+	} // end getScore
 
 	public int get4Streak( int player ) 
 	{
