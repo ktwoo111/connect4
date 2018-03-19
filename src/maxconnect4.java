@@ -36,11 +36,11 @@ import java.util.Scanner;
 
 public class maxconnect4
 {
-  public static void main(String[] args) 
-  {
-	// check for the correct number of arguments
-    
-	  /*
+	public static void main(String[] args) 
+	{
+		// check for the correct number of arguments
+
+		/*
 	  if( args.length != 4 ) 
     {
       System.out.println("Four command-line arguments are needed:\n"
@@ -49,165 +49,207 @@ public class maxconnect4
 
       exit_function( 0 );
      }
-     
-    
+
+
     // parse the input arguments
-	 
-    
+
+
     String game_mode = args[0].toString();				// the game mode
     String input = args[1].toString();					// the input game file
     String output = args[2].toString();				    // the output game file
     String CorH = args[2].toString();
     int depthLevel = Integer.parseInt( args[3] );  		// the depth level of the ai search
-    */
-    
-	
-    String game_mode = "one-move";				// the game mode
-    String input = "src/Jake.txt";					// the input game file
-    String output = "output1.txt";				    // the output game file
-    String CorH = "human-next";       //for interactive, who goes first
-    int depthLevel =5;  		// the depth level of the ai search
-    
-		
-    
-    // create and initialize the game board
-    GameBoard currentGame = new GameBoard(input);
-    	
-    //  variables to keep up with the game
-    int playColumn = 99;				//  the players choice of column to play
-    boolean playMade = false;			//  set to true once a play has been made
+		 */
 
-    if( game_mode.equalsIgnoreCase( "interactive" ) ) 
-    {
-    	AiPlayer computer = new AiPlayer(depthLevel,1);    
-    	if(CorH.equalsIgnoreCase("computer-next")){
-    		computer = new AiPlayer(depthLevel,currentGame.getCurrentTurn());
-    	}
-    	else{
-    		if(currentGame.getCurrentTurn() == 1 ){
-    		computer = new AiPlayer(depthLevel,2);
-    		}
-    		else{
-    		computer = new AiPlayer(depthLevel,1);		
-    		}   		
-    	}
-    	
-    	 System.out.print("\nMaxConnect-4 game\n");
-         System.out.print("game state before move:\n");
-         //print the current game board
-         currentGame.printGameBoard();
-         // print the current scores
-         System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
-     			", Player2 = " + currentGame.getScore( 2 ) + "\n " );
-         
-         
-         
-    	 while(currentGame.getPieceCount() < 42 ){
-    	        if( currentGame.getPieceCount() < 42 ) 
-    	        {
-    	            int current_player = currentGame.getCurrentTurn();
+
+		String game_mode = "interactive";				// the game mode
+		String input = "src/inputs/testForPositive.txt";					// the input game file
+		String output = "output1.txt";				    // the output game file
+		String CorH = "human-next";       //for interactive, who goes first
+		int depthLevel =5;  		// the depth level of the ai search
+
+
+
+		// create and initialize the game board
+		GameBoard currentGame = new GameBoard(input);
+
+		//  variables to keep up with the game
+		int playColumn = 99;				//  the players choice of column to play
+		boolean playMade = false;			//  set to true once a play has been made
+
+		if( game_mode.equalsIgnoreCase( "interactive" ) ) 
+		{
+			AiPlayer computer = new AiPlayer(depthLevel,1);    
+			if(CorH.equalsIgnoreCase("computer-next")){
+				computer = new AiPlayer(depthLevel,currentGame.getCurrentTurn());
+			}
+			else if(CorH.equalsIgnoreCase("human-next")){
+				if(currentGame.getCurrentTurn() == 1 ){
+					computer = new AiPlayer(depthLevel,2);
+				}
+				else{
+					computer = new AiPlayer(depthLevel,1);		
+				}   		
+			}
+			else{
+				System.out.println("didn't write computer-next or human-next");
+				System.exit(0);
+			}
+
+			System.out.print("\nMaxConnect-4 game\n");
+			System.out.print("game state before move:\n");
+			//print the current game board
+			currentGame.printGameBoard();
+			// print the current scores
+			System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
+					", Player2 = " + currentGame.getScore( 2 ) + "\n " );
+
+
+			if(currentGame.getPieceCount() == 42){
+				System.exit(0);
+
+			}
+
+			while(currentGame.getPieceCount() < 42 ){
+				if( currentGame.getPieceCount() < 42 ) 
+				{
+					int current_player = currentGame.getCurrentTurn();
 					if(current_player == computer.getPlayerNum()){
-    	            	playColumn = computer.findBestPlay(currentGame);  	            	
-    	            }
+						playColumn = computer.findBestPlay(currentGame);  	            	
+					}
 					else{
-						System.out.print("which column(0-6) do you want to put your piece?: ");
+						//System.out.print("which column(0-6) do you want to put your piece?: ");
 						Scanner in = new Scanner(System.in);
-						playColumn = in.nextInt();
-						
-						if(playColumn < 0 || playColumn > 6) {
-							playColumn = 0;						
+						while(true){
+							System.out.print("which column(0-6) do you want to put your piece?: ");
+							playColumn = in.nextInt();
+
+							if(playColumn >= 0 && playColumn <= 6 && currentGame.isValidPlay(playColumn)) {
+								break;
+							}
+
 						}
-						
+
+
+
 					}  	
-    	            
+
 					// play the piece
-    	            currentGame.playPiece(playColumn);           	
-    	            // display the current game board
-    	            
-    	            System.out.println("move " + currentGame.getPieceCount() 
-    	                               + ": Player " + current_player
-    	                               + ", column " + playColumn);
-    	            System.out.print("game state after move:\n");
-    	            currentGame.printGameBoard();
-    	        
-    	            // print the current scores
-    	            System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
-    	                                ", Player2 = " + currentGame.getScore( 2 ) + "\n " );
-    	            
-    	            currentGame.printGameBoardToFile( output );
-    	        } 
-    	        else 
-    	        {
-    	    	System.out.println("\nI can't play.\nThe Board is Full\n\nGame Over");
-    	        }
-    	        }
-    } 
-			
-    else if(game_mode.equalsIgnoreCase( "one-move" ) ) 
-    {
-  
-    	// create the Ai Player
-        AiPlayer player1 = new AiPlayer(depthLevel,1);
-        AiPlayer player2 = new AiPlayer(depthLevel,2);
-        
-        ArrayList<AiPlayer> players = new ArrayList<AiPlayer>();
-        players.add(player1);
-        players.add(player2);
-        
-        System.out.print("\nMaxConnect-4 game\n");
-        System.out.print("game state before move:\n");
-        //print the current game board
+					currentGame.playPiece(playColumn);           	
+					// display the current game board
+
+					System.out.println("move " + currentGame.getPieceCount() 
+					+ ": Player " + current_player
+					+ ", column " + playColumn);
+					System.out.print("game state after move:\n");
+					currentGame.printGameBoard();
+
+					// print the current scores
+					System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
+							", Player2 = " + currentGame.getScore( 2 ) + "\n " );
+
+					if(current_player == computer.getPlayerNum()){
+						currentGame.printGameBoardToFile("computer.txt");
+					}
+					else{
+						currentGame.printGameBoardToFile("human.txt");
+					}
+				} 
+				else 
+				{
+					System.out.println("\nI can't play.\nThe Board is Full\n\nGame Over");
+				}
+			}
+
+		} 
+
+		else if(game_mode.equalsIgnoreCase( "one-move" ) ) 
+		{
+
+			// create the Ai Player
+			AiPlayer player1 = new AiPlayer(depthLevel,1);
+			AiPlayer player2 = new AiPlayer(depthLevel,2);
+
+			ArrayList<AiPlayer> players = new ArrayList<AiPlayer>();
+			players.add(player1);
+			players.add(player2);
+
+			System.out.print("\nMaxConnect-4 game\n");
+			System.out.print("game state before move:\n");
+			//print the current game board
+			currentGame.printGameBoard();
+			// print the current scores
+			System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
+					", Player2 = " + currentGame.getScore( 2 ) + "\n " );
+
+
+			/*
+        //testing for positive and negatives
         currentGame.printGameBoard();
-        // print the current scores
-        System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
-    			", Player2 = " + currentGame.getScore( 2 ) + "\n " );
-        
-        
-        
-        // ****************** this chunk of code makes the computer play
-        while(currentGame.getPieceCount() < 42 ){
-        if( currentGame.getPieceCount() < 42 ) 
-        {
-            int current_player = currentGame.getCurrentTurn();
-            // AI play
-            playColumn = players.get(currentGame.getCurrentTurn()-1).findBestPlay(currentGame);  	
-            // play the piece
-            currentGame.playPiece(playColumn);           	
-            // display the current game board
-            
-            System.out.println("move " + currentGame.getPieceCount() 
-                               + ": Player " + current_player
-                               + ", column " + playColumn);
-            System.out.print("game state after move:\n");
-            currentGame.printGameBoard();
-        
-            // print the current scores
-            System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
-                                ", Player2 = " + currentGame.getScore( 2 ) + "\n " );
-            
-            currentGame.printGameBoardToFile( output );
-        } 
-        else 
-        {
-    	System.out.println("\nI can't play.\nThe Board is Full\n\nGame Over");
-        }
-        }
-    }
-    
-    return;
-    
-} // end of main()
-	
-  
-  
-  
-  /**
-   * This method is used when to exit the program prematurely.
-   * @param value an integer that is returned to the system when the program exits.
-   */
-  private static void exit_function( int value )
-  {
-      System.out.println("exiting from MaxConnectFour.java!\n\n");
-      System.exit( value );
-  }
+        System.out.println(player2.Evaluation(currentGame, 5));
+        System.out.println(player1.Evaluation(currentGame,5));
+        ////////////
+       System.exit(0);
+			 */
+			if(currentGame.getPieceCount() == 42){
+				System.exit(0);
+
+			}
+
+			// ****************** this chunk of code makes the computer play
+			while(currentGame.getPieceCount() < 42 ){
+				if( currentGame.getPieceCount() < 42 ) 
+				{
+					int current_player = currentGame.getCurrentTurn();
+					// AI play
+					if(current_player == 1){
+						playColumn = player1.findBestPlay(currentGame);	
+					}
+					else{
+						playColumn = player2.findBestPlay(currentGame);
+					}
+					if(playColumn == 8){ //if none of the moves pass, then the default value is 8
+						break;
+					}
+
+
+					// play the piece
+					currentGame.playPiece(playColumn);           	
+					// display the current game board
+
+					System.out.println("move " + currentGame.getPieceCount() 
+					+ ": Player " + current_player
+					+ ", column " + playColumn);
+					System.out.print("game state after move:\n");
+					currentGame.printGameBoard();
+
+					// print the current scores
+					System.out.println( "Score: Player 1 = " + currentGame.getScore( 1 ) +
+							", Player2 = " + currentGame.getScore( 2 ) + "\n " );
+
+					currentGame.printGameBoardToFile( output );
+				} 
+				else 
+				{
+					System.out.println("\nI can't play.\nThe Board is Full\n\nGame Over");
+				}
+			}
+		}
+
+		return;
+
+	} // end of main()
+
+
+
+
+	/**
+	 * This method is used when to exit the program prematurely.
+	 * @param value an integer that is returned to the system when the program exits.
+	 */
+	private static void exit_function( int value )
+	{
+		System.out.println("exiting from MaxConnectFour.java!\n\n");
+		System.exit( value );
+	}
 } // end of class connectFour
